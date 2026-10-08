@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exercícios Python</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --bg-soft: #111827;
+        --panel: rgba(15, 23, 42, 0.8);
+        --panel-strong: #1e293b;
+        --primary: #38bdf8;
+        --primary-strong: #2563eb;
+        --accent: #10b981;
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --border: rgba(148, 163, 184, 0.2);
+        --shadow: 0 18px 40px rgba(15, 23, 42, 0.35);
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: linear-gradient(135deg, var(--bg) 0%, #0b1120 100%);
+        color: var(--text);
+      }
+
+      .container {
+        width: min(1100px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      header {
+        padding: 48px 0 26px;
+      }
+
+      .hero {
+        background: rgba(15, 23, 42, 0.72);
+        border: 1px solid var(--border);
+        border-radius: 22px;
+        padding: 32px;
+        box-shadow: var(--shadow);
+      }
+
+      .eyebrow {
+        display: inline-block;
+        font-size: 0.76rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--primary);
+        font-weight: 700;
+      }
+
+      h1 {
+        margin: 14px 0 12px;
+        font-size: clamp(2.2rem, 4vw, 4rem);
+        line-height: 1.1;
+      }
+
+      .subtitle {
+        margin: 0;
+        max-width: 680px;
+        color: var(--muted);
+        font-size: 1.08rem;
+        line-height: 1.7;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-top: 28px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 20px;
+        border-radius: 10px;
+        color: #eff6ff;
+        text-decoration: none;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-strong) 100%);
+        transition: transform 0.18s ease;
+      }
+
+      .btn:hover { transform: translateY(-2px); }
+
+      .btn.secondary {
+        background: transparent;
+        border: 1px solid var(--primary);
+        color: var(--primary);
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 18px;
+        margin-top: 30px;
+      }
+
+      .stat {
+        background: rgba(30, 41, 59, 0.85);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 18px 20px;
+      }
+
+      .stat strong {
+        display: block;
+        font-size: 1.7rem;
+        margin-bottom: 8px;
+        color: var(--primary);
+      }
+
+      .stat span {
+        color: var(--muted);
+      }
+
+      main {
+        padding: 18px 0 56px;
+      }
+
+      .section-title {
+        margin: 30px 0 18px;
+        font-size: 1.5rem;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+      }
+
+      .card {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 22px;
+        border-radius: 18px;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        transition: transform 0.18s ease, border-color 0.18s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(56, 189, 248, 0.5);
+      }
+
+      .badge {
+        display: inline-flex;
+        width: fit-content;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(16, 185, 129, 0.12);
+        color: #bbf7d0;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .card h2 {
+        margin: 18px 0 12px;
+        font-size: 1.25rem;
+      }
+
+      .card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      footer {
+        padding: 18px 0 32px;
+        color: var(--muted);
+        text-align: center;
+      }
+
+      @media (max-width: 640px) {
+        .hero { padding: 24px 20px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <section class="hero">
+          <span class="eyebrow">Linguagens de Programação</span>
+          <h1>Exercícios Python</h1>
+          <p class="subtitle">
+            <strong>Aluno:</strong> Pedro Henriques Silva<br />
+            <strong>Professor:</strong> Alexandre Neves Louzada
+          </p>
+          <p class="subtitle" style="margin-top: 12px;">
+            Repositório com atividades práticas de programação em Python, abordando bibliotecas e
+            ferramentas para análise de dados, visualização, automação e desenvolvimento web.
+          </p>
+
+          <div class="actions">
+            <a class="btn" href="https://github.com/SEU-USUARIO/SEU-REPOSITORIO" target="_blank" rel="noopener">
+              Ver repositório
+            </a>
+            <a class="btn secondary" href="https://github.com/SEU-USUARIO/SEU-REPOSITORIO-STREAMLIT" target="_blank" rel="noopener">
+              Repositório Streamlit
+            </a>
+          </div>
+
+          <div class="stats">
+            <div class="stat">
+              <strong>9</strong>
+              <span>Arquivos de estudo</span>
+            </div>
+            <div class="stat">
+              <strong>Python</strong>
+              <span>Foco principal</span>
+            </div>
+            <div class="stat">
+              <strong>Data</strong>
+              <span>Análise e visualização</span>
+            </div>
+          </div>
+        </section>
+      </header>
+
+      <main>
+        <h2 class="section-title">Conteúdo do projeto</h2>
+        <section class="grid">
+          <article class="card">
+            <div>
+              <span class="badge">biblioteca</span>
+              <h2>NumPy</h2>
+              <p>Fundamentos de arrays, operações vetorizadas e cálculos numéricos em Python.</p>
+            </div>
+          </article>
+
+          <article class="card">
+            <div>
+              <span class="badge">dados</span>
+              <h2>Pandas</h2>
+              <p>Manipulação de dados tabulares, filtros, agrupamentos e limpeza de informações.</p>
+            </div>
+          </article>
+
+          <article class="card">
+            <div>
+              <span class="badge">gráfico</span>
+              <h2>Matplotlib</h2>
+              <p>Criação de gráficos e visualizações estáticas para análise exploratória.</p>
+            </div>
+          </article>
+
+          <article class="card">
+            <div>
+              <span class="badge">visualização</span>
+              <h2>Seaborn</h2>
+              <p>Visualizações mais refinadas e estatísticas gráficas com estilo profissional.</p>
+            </div>
+          </article>
+
+          <article class="card">
+            <div>
+              <span class="badge">mapa</span>
+              <h2>Folium</h2>
+              <p>Mapas interativos e geolocalização com visualização em HTML e JavaScript.</p>
+            </div>
+          </article>
+
+          <article class="card">
+            <div>
+              <span class="badge">bd</span>
+              <h2>SQLAlchemy</h2>
+              <p>Conexão com bancos de dados e mapeamento ORM com Python.</p>
+            </div>
+          </article>
+
+          <article class="card">
+            <div>
+              <span class="badge">app</span>
+              <h2>Streamlit</h2>
+              <p>Criação de dashboards e aplicações web interativas com poucos códigos.</p>
+            </div>
+          </article>
+
+          <article class="card">
+            <div>
+              <span class="badge">web</span>
+              <h2>Dados na Web</h2>
+              <p>Coleta e análise de dados disponíveis na internet e em fontes externas.</p>
+            </div>
+          </article>
+
+          <article class="card">
+            <div>
+              <span class="badge">trabalho</span>
+              <h2>Projeto Final</h2>
+              <p>Atividade principal do curso, com foco em linguagem de programação e aplicação prática.</p>
+            </div>
+          </article>
+        </section>
+      </main>
+
+      <footer>
+        Desenvolvido para apresentação do projeto de Linguagens de Programação.
+      </footer>
+    </div>
+  </body>
+</html>
