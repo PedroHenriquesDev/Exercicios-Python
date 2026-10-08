@@ -1,0 +1,679 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# Tema 5 — Distribuição de Computadores por Aluno em Escolas Públicas\n",
+        "\n",
+        "### Identificação do projeto\n",
+        "- **Disciplina:** Linguagens de Programação\n",
+        "- **Mês e ano:** Outubro de 2026\n",
+        "- **Professor(a):** Alexandre Louzada\n",
+        "- **Aluno(a):** Pedro Henriques Silva\n",
+        "\n",
+        "> **Tema:** análise da distribuição de computadores por aluno e das desigualdades de infraestrutura tecnológica entre estados e entre escolas urbanas e rurais.\n",
+        "\n",
+        "---\n",
+        "\n",
+        "# 1. Título e Introdução\n",
+        "\n",
+        "A infraestrutura tecnológica é um componente importante da capacidade das escolas públicas de oferecer atividades pedagógicas apoiadas por computadores. Entretanto, a disponibilidade de equipamentos pode variar entre estados e entre escolas localizadas em áreas urbanas e rurais.\n",
+        "\n",
+        "Este projeto analisa dados de **2015 a 2024** para investigar como a quantidade de computadores se relaciona com o número de alunos e para identificar diferenças territoriais na disponibilidade relativa de equipamentos.\n",
+        "\n",
+        "A análise é importante porque uma simples contagem de computadores não permite comparar adequadamente grupos de tamanhos diferentes. Por isso, será utilizada uma medida relativa — computadores por aluno — permitindo avaliar a disponibilidade de equipamentos em relação à demanda potencial."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# 2. Definição do Problema\n",
+        "\n",
+        "## Pergunta principal\n",
+        "\n",
+        "**Como evoluiu a disponibilidade de computadores por aluno nas escolas públicas entre 2015 e 2024, e quais desigualdades podem ser observadas entre estados e entre zonas urbana e rural?**\n",
+        "\n",
+        "## Por que essa pergunta é relevante?\n",
+        "\n",
+        "A quantidade absoluta de computadores pode ser enganosa: um estado pode possuir muitos equipamentos, mas também possuir uma quantidade muito maior de alunos. A relação entre computadores e alunos permite uma comparação mais justa da infraestrutura disponível.\n",
+        "\n",
+        "Além disso, a comparação entre áreas urbanas e rurais permite verificar se a localização das escolas está associada a diferenças na disponibilidade relativa de equipamentos.\n",
+        "\n",
+        "## Qual decisão poderia ser tomada com base nessa análise?\n",
+        "\n",
+        "Os resultados podem apoiar decisões de **priorização de investimentos**, direcionando atenção para estados, anos ou tipos de escola que apresentem menor disponibilidade relativa de computadores ou maior desigualdade urbano-rural.\n",
+        "\n",
+        "> **Importante:** os dados permitem identificar padrões de infraestrutura; eles não permitem, sozinhos, afirmar a qualidade pedagógica do uso dos computadores."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# 3. Definição do KPI\n",
+        "\n",
+        "## KPI principal: Computadores por aluno\n",
+        "\n",
+        "O indicador principal será:\n",
+        "\n",
+        "**KPI = Número total de computadores ÷ Número total de alunos**\n",
+        "\n",
+        "### Por que esse KPI foi escolhido?\n",
+        "\n",
+        "Ele relaciona diretamente a oferta de equipamentos à quantidade de alunos. Assim, permite comparar estados, anos e zonas mesmo quando o tamanho das redes escolares é diferente.\n",
+        "\n",
+        "### Como interpretar?\n",
+        "\n",
+        "- **KPI maior:** maior disponibilidade relativa de computadores.\n",
+        "- **KPI menor:** menor disponibilidade relativa.\n",
+        "- Exemplo: KPI = 0,50 significa aproximadamente **1 computador para cada 2 alunos**, em termos agregados.\n",
+        "\n",
+        "### Cuidados de interpretação\n",
+        "\n",
+        "O KPI é uma medida de disponibilidade agregada. Ele não informa se os computadores estão funcionando, atualizados, conectados à internet ou distribuídos igualmente dentro das escolas."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# 4. Aquisição dos Dados\n",
+        "\n",
+        "## Fonte e método de obtenção\n",
+        "\n",
+        "**Fonte utilizada:** arquivo Excel fornecido para o projeto: `Simulacao_Computadores_por_Aluno_Escolas_Publicas_2015_2024 (1).xlsx`.\n",
+        "\n",
+        "**Método de obtenção:** upload do arquivo para o ambiente do notebook e leitura com `pandas`.\n",
+        "\n",
+        "A base contém registros por **estado, tipo de escola e ano**, abrangendo 2015–2024.\n",
+        "\n",
+        "## Principais variáveis\n",
+        "\n",
+        "| Variável | Descrição |\n",
+        "|---|---|\n",
+        "| Estado | Unidade federativa |\n",
+        "| Tipo de Escola | Urbana ou Rural |\n",
+        "| Ano | Ano da observação |\n",
+        "| Número de Escolas | Quantidade de escolas |\n",
+        "| Número de Alunos | Quantidade de alunos |\n",
+        "| Número de Computadores | Quantidade de computadores |\n",
+        "| Computadores por Aluno | Razão registrada na base |\n",
+        "\n",
+        "A análise recalcula o KPI a partir dos totais de alunos e computadores para manter consistência nas agregações."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "import pandas as pd\n",
+        "import numpy as np\n",
+        "import matplotlib.pyplot as plt\n",
+        "from pathlib import Path\n",
+        "\n",
+        "# Arquivo de entrada\n",
+        "ARQUIVO = Path(\"Simulacao_Computadores_por_Aluno_Escolas_Publicas_2015_2024 (1).xlsx\")\n",
+        "\n",
+        "df = pd.read_excel(ARQUIVO)\n",
+        "\n",
+        "print(f\"Linhas: {df.shape[0]}\")\n",
+        "print(f\"Colunas: {df.shape[1]}\")\n",
+        "display(df.head())"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# 5. Limpeza e Preparação dos Dados\n",
+        "\n",
+        "Nesta etapa serão verificados:\n",
+        "- valores nulos;\n",
+        "- tipos das variáveis;\n",
+        "- duplicidades;\n",
+        "- consistência dos valores numéricos;\n",
+        "- padronização dos nomes das colunas;\n",
+        "- criação do KPI utilizado na análise.\n",
+        "\n",
+        "A limpeza é essencial porque erros de tipo ou valores ausentes podem alterar as estatísticas e os gráficos."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "# Cópia para preservar a base original\n",
+        "dados = df.copy()\n",
+        "\n",
+        "# 1. Padronização dos nomes\n",
+        "dados.columns = [\n",
+        "    \"estado\",\n",
+        "    \"tipo_escola\",\n",
+        "    \"ano\",\n",
+        "    \"numero_escolas\",\n",
+        "    \"numero_alunos\",\n",
+        "    \"numero_computadores\",\n",
+        "    \"computadores_por_aluno_original\"\n",
+        "]\n",
+        "\n",
+        "# 2. Conversão de tipos\n",
+        "dados[\"ano\"] = pd.to_numeric(dados[\"ano\"], errors=\"coerce\").astype(\"Int64\")\n",
+        "\n",
+        "colunas_numericas = [\n",
+        "    \"numero_escolas\",\n",
+        "    \"numero_alunos\",\n",
+        "    \"numero_computadores\",\n",
+        "    \"computadores_por_aluno_original\"\n",
+        "]\n",
+        "\n",
+        "for coluna in colunas_numericas:\n",
+        "    dados[coluna] = pd.to_numeric(dados[coluna], errors=\"coerce\")\n",
+        "\n",
+        "# 3. Diagnóstico de nulos\n",
+        "print(\"Valores nulos por coluna:\")\n",
+        "display(dados.isna().sum().to_frame(\"quantidade_nulos\"))\n",
+        "\n",
+        "# 4. Diagnóstico de duplicidades\n",
+        "print(\"Linhas duplicadas:\", dados.duplicated().sum())\n",
+        "\n",
+        "# 5. Verificação de valores inválidos nos principais quantitativos\n",
+        "print(\"Alunos <= 0:\", (dados[\"numero_alunos\"] <= 0).sum())\n",
+        "print(\"Computadores < 0:\", (dados[\"numero_computadores\"] < 0).sum())\n",
+        "\n",
+        "# 6. Como a base não apresenta nulos nas variáveis essenciais, não é necessário imputar valores.\n",
+        "# Linhas com informações essenciais ausentes seriam excluídas antes do cálculo do KPI.\n",
+        "dados = dados.dropna(subset=[\"estado\", \"tipo_escola\", \"ano\", \"numero_alunos\", \"numero_computadores\"])\n",
+        "\n",
+        "# 7. KPI recalculado\n",
+        "dados[\"kpi_computadores_aluno\"] = (\n",
+        "    dados[\"numero_computadores\"] / dados[\"numero_alunos\"]\n",
+        ")\n",
+        "\n",
+        "print(\"\\nBase após preparação:\", dados.shape)\n",
+        "display(dados.head())"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Verificação do KPI original versus KPI recalculado\n",
+        "\n",
+        "A coluna original `Computadores por Aluno` é mantida para referência, mas o KPI utilizado no projeto é recalculado como computadores divididos por alunos. Isso permite agregá-lo corretamente por estado, ano e zona."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "comparacao = dados[[\n",
+        "    \"computadores_por_aluno_original\",\n",
+        "    \"kpi_computadores_aluno\"\n",
+        "]].describe()\n",
+        "\n",
+        "display(comparacao.round(3))"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# 6. Análise Exploratória\n",
+        "\n",
+        "## 6.1 Estatísticas descritivas gerais\n",
+        "\n",
+        "Primeiro observamos o tamanho da base e os principais valores de alunos, computadores e escolas."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "estatisticas = dados[[\n",
+        "    \"numero_escolas\",\n",
+        "    \"numero_alunos\",\n",
+        "    \"numero_computadores\",\n",
+        "    \"kpi_computadores_aluno\"\n",
+        "]].describe().T\n",
+        "\n",
+        "display(estatisticas.round(3))\n",
+        "\n",
+        "print(\"Estados:\", dados[\"estado\"].nunique())\n",
+        "print(\"Anos:\", dados[\"ano\"].min(), \"a\", dados[\"ano\"].max())\n",
+        "print(\"Tipos de escola:\", dados[\"tipo_escola\"].unique())"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## 6.2 Infraestrutura por estado\n",
+        "\n",
+        "A comparação por estado utiliza os totais de alunos e computadores e depois calcula o KPI. Essa abordagem evita calcular uma simples média dos KPIs de registros individuais."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "por_estado = (\n",
+        "    dados.groupby(\"estado\")[[\"numero_escolas\", \"numero_alunos\", \"numero_computadores\"]]\n",
+        "    .sum()\n",
+        ")\n",
+        "\n",
+        "por_estado[\"kpi_computadores_aluno\"] = (\n",
+        "    por_estado[\"numero_computadores\"] / por_estado[\"numero_alunos\"]\n",
+        ")\n",
+        "\n",
+        "por_estado = por_estado.sort_values(\"kpi_computadores_aluno\", ascending=False)\n",
+        "\n",
+        "display(por_estado.round(3))"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## 6.3 Evolução temporal\n",
+        "\n",
+        "A evolução anual mostra se a disponibilidade relativa de computadores aumentou ou diminuiu no período."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "por_ano = (\n",
+        "    dados.groupby(\"ano\")[[\"numero_alunos\", \"numero_computadores\"]]\n",
+        "    .sum()\n",
+        ")\n",
+        "\n",
+        "por_ano[\"kpi_computadores_aluno\"] = (\n",
+        "    por_ano[\"numero_computadores\"] / por_ano[\"numero_alunos\"]\n",
+        ")\n",
+        "\n",
+        "display(por_ano.round(3))\n",
+        "\n",
+        "ano_inicial = por_ano.index.min()\n",
+        "ano_final = por_ano.index.max()\n",
+        "kpi_inicial = por_ano.loc[ano_inicial, \"kpi_computadores_aluno\"]\n",
+        "kpi_final = por_ano.loc[ano_final, \"kpi_computadores_aluno\"]\n",
+        "variacao = (kpi_final / kpi_inicial - 1) * 100\n",
+        "\n",
+        "print(f\"KPI em {ano_inicial}: {kpi_inicial:.3f}\")\n",
+        "print(f\"KPI em {ano_final}: {kpi_final:.3f}\")\n",
+        "print(f\"Variação relativa entre o início e o fim: {variacao:.1f}%\")"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## 6.4 Comparação urbano × rural\n",
+        "\n",
+        "A seguir, a razão é calculada separadamente para escolas urbanas e rurais em cada ano. O objetivo é verificar se a diferença entre as zonas é persistente ou varia ao longo do tempo."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "por_ano_zona = (\n",
+        "    dados.groupby([\"ano\", \"tipo_escola\"])[[\"numero_alunos\", \"numero_computadores\"]]\n",
+        "    .sum()\n",
+        ")\n",
+        "\n",
+        "por_ano_zona[\"kpi_computadores_aluno\"] = (\n",
+        "    por_ano_zona[\"numero_computadores\"] /\n",
+        "    por_ano_zona[\"numero_alunos\"]\n",
+        ")\n",
+        "\n",
+        "evolucao_zona = por_ano_zona[\"kpi_computadores_aluno\"].unstack()\n",
+        "\n",
+        "evolucao_zona[\"gap_urbano_rural\"] = (\n",
+        "    evolucao_zona[\"Urbana\"] - evolucao_zona[\"Rural\"]\n",
+        ").abs()\n",
+        "\n",
+        "display(evolucao_zona.round(3))"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# 7. Visualizações\n",
+        "\n",
+        "As visualizações foram selecionadas para responder diretamente à pergunta do projeto. Cada gráfico possui título, eixos nomeados e uma quantidade controlada de elementos visuais."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## 7.1 Evolução do KPI\n",
+        "\n",
+        "Este gráfico responde: **como a disponibilidade relativa de computadores mudou ao longo do período?**"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "plt.figure(figsize=(10, 5))\n",
+        "plt.plot(\n",
+        "    por_ano.index,\n",
+        "    por_ano[\"kpi_computadores_aluno\"],\n",
+        "    marker=\"o\",\n",
+        "    linewidth=2\n",
+        ")\n",
+        "\n",
+        "plt.title(\"Evolução de computadores por aluno — 2015 a 2024\")\n",
+        "plt.xlabel(\"Ano\")\n",
+        "plt.ylabel(\"Computadores por aluno\")\n",
+        "plt.xticks(por_ano.index)\n",
+        "plt.grid(axis=\"y\", alpha=0.25)\n",
+        "plt.tight_layout()\n",
+        "plt.show()"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## 7.2 Urbana × Rural ao longo do tempo\n",
+        "\n",
+        "Este gráfico responde: **as escolas urbanas e rurais apresentam a mesma disponibilidade relativa de computadores?**"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "plt.figure(figsize=(10, 5))\n",
+        "\n",
+        "plt.plot(\n",
+        "    evolucao_zona.index,\n",
+        "    evolucao_zona[\"Urbana\"],\n",
+        "    marker=\"o\",\n",
+        "    linewidth=2,\n",
+        "    label=\"Urbana\"\n",
+        ")\n",
+        "\n",
+        "plt.plot(\n",
+        "    evolucao_zona.index,\n",
+        "    evolucao_zona[\"Rural\"],\n",
+        "    marker=\"o\",\n",
+        "    linewidth=2,\n",
+        "    label=\"Rural\"\n",
+        ")\n",
+        "\n",
+        "plt.title(\"Computadores por aluno: comparação urbana e rural\")\n",
+        "plt.xlabel(\"Ano\")\n",
+        "plt.ylabel(\"Computadores por aluno\")\n",
+        "plt.xticks(evolucao_zona.index)\n",
+        "plt.grid(axis=\"y\", alpha=0.25)\n",
+        "plt.legend()\n",
+        "plt.tight_layout()\n",
+        "plt.show()"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## 7.3 Diferença urbano-rural\n",
+        "\n",
+        "Aqui não basta saber qual linha está acima. O foco é medir **o tamanho da desigualdade** entre as zonas em cada ano."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "plt.figure(figsize=(10, 5))\n",
+        "\n",
+        "plt.bar(\n",
+        "    evolucao_zona.index.astype(str),\n",
+        "    evolucao_zona[\"gap_urbano_rural\"]\n",
+        ")\n",
+        "\n",
+        "plt.title(\"Diferença urbano-rural na razão de computadores por aluno\")\n",
+        "plt.xlabel(\"Ano\")\n",
+        "plt.ylabel(\"Diferença absoluta\")\n",
+        "plt.grid(axis=\"y\", alpha=0.25)\n",
+        "plt.tight_layout()\n",
+        "plt.show()"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## 7.4 Comparação entre estados\n",
+        "\n",
+        "Este gráfico responde: **quais estados apresentam maior e menor disponibilidade relativa de computadores?**"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "plt.figure(figsize=(10, 6))\n",
+        "\n",
+        "plt.bar(\n",
+        "    por_estado.index,\n",
+        "    por_estado[\"kpi_computadores_aluno\"]\n",
+        ")\n",
+        "\n",
+        "plt.title(\"Computadores por aluno por estado\")\n",
+        "plt.xlabel(\"Estado\")\n",
+        "plt.ylabel(\"Computadores por aluno\")\n",
+        "plt.grid(axis=\"y\", alpha=0.25)\n",
+        "plt.tight_layout()\n",
+        "plt.show()"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## 7.5 Distribuição do KPI\n",
+        "\n",
+        "O histograma ajuda a verificar a distribuição dos valores do indicador nos registros da base e se há concentração ou dispersão relevante."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "plt.figure(figsize=(9, 5))\n",
+        "\n",
+        "plt.hist(\n",
+        "    dados[\"kpi_computadores_aluno\"],\n",
+        "    bins=15,\n",
+        "    edgecolor=\"black\"\n",
+        ")\n",
+        "\n",
+        "plt.title(\"Distribuição da razão de computadores por aluno\")\n",
+        "plt.xlabel(\"Computadores por aluno\")\n",
+        "plt.ylabel(\"Frequência\")\n",
+        "plt.grid(axis=\"y\", alpha=0.25)\n",
+        "plt.tight_layout()\n",
+        "plt.show()"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# 8. Insights e Interpretação\n",
+        "\n",
+        "## 8.1 Estados\n",
+        "\n",
+        "O ranking descritivo mostra que **CE apresenta a maior razão agregada de computadores por aluno, com aproximadamente 0,589**, enquanto **PR apresenta a menor, com aproximadamente 0,416**.\n",
+        "\n",
+        "Isso representa uma diferença relevante na disponibilidade relativa de equipamentos. Entretanto, esse resultado não significa que CE possua necessariamente mais computadores em termos absolutos: o KPI considera também o número de alunos.\n",
+        "\n",
+        "## 8.2 Evolução temporal\n",
+        "\n",
+        "O KPI deve ser interpretado considerando simultaneamente a quantidade de computadores e a quantidade de alunos. Uma mudança no indicador pode ocorrer tanto por aumento/redução dos equipamentos quanto por alteração no número de alunos.\n",
+        "\n",
+        "## 8.3 Desigualdade urbano-rural\n",
+        "\n",
+        "Na base analisada, a maior diferença absoluta entre as razões urbana e rural ocorre em **2017, com aproximadamente 0,171**. Já a menor diferença ocorre em **2020, com aproximadamente 0,003**.\n",
+        "\n",
+        "Isso indica que a desigualdade entre as zonas não permanece constante: há anos em que as razões se aproximam bastante e outros em que se afastam.\n",
+        "\n",
+        "## 8.4 Evidências e limitações\n",
+        "\n",
+        "As conclusões são sustentadas pelos agrupamentos por estado, ano e tipo de escola e pelo KPI calculado a partir dos totais.\n",
+        "\n",
+        "### Limitações\n",
+        "- O KPI não informa se os computadores estão funcionando.\n",
+        "- Não há, neste indicador, informação sobre qualidade ou idade dos equipamentos.\n",
+        "- Não mede acesso à internet.\n",
+        "- A razão agregada pode esconder desigualdades entre escolas dentro do mesmo estado ou zona.\n",
+        "- A base permite analisar associação e distribuição, mas não estabelecer causalidade sobre os motivos das diferenças."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# 9. Conclusão\n",
+        "\n",
+        "A análise mostra que a distribuição de computadores por aluno apresenta **variação entre estados e ao longo do tempo**, além de diferenças entre escolas urbanas e rurais.\n",
+        "\n",
+        "A pergunta inicial pode ser respondida da seguinte forma:\n",
+        "\n",
+        "> **A disponibilidade relativa de computadores não é uniforme. Existem diferenças entre estados e a distância entre zonas urbana e rural varia de ano para ano.**\n",
+        "\n",
+        "Na base analisada:\n",
+        "- o **CE** possui a maior razão agregada de computadores por aluno (**0,589**);\n",
+        "- o **PR** possui a menor (**0,416**);\n",
+        "- a maior desigualdade urbano-rural ocorre em **2017 (0,171)**;\n",
+        "- a menor ocorre em **2020 (0,003)**.\n",
+        "\n",
+        "## Possíveis decisões\n",
+        "\n",
+        "Com base nesses resultados, gestores poderiam:\n",
+        "1. investigar as regiões com menor disponibilidade relativa;\n",
+        "2. avaliar a necessidade de priorização de investimentos;\n",
+        "3. acompanhar separadamente escolas urbanas e rurais;\n",
+        "4. repetir o indicador periodicamente para monitorar a evolução.\n",
+        "\n",
+        "Essas decisões devem ser complementadas por informações sobre funcionamento, conectividade, idade dos equipamentos, quantidade de laboratórios e condições de uso."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# 10. Reflexão Final — Data Storytelling\n",
+        "\n",
+        "## Se este projeto fosse apresentado a um gestor\n",
+        "\n",
+        "### Principal mensagem\n",
+        "\n",
+        "**A infraestrutura computacional apresenta desigualdades que não podem ser avaliadas apenas pelo número total de computadores. A relação entre equipamentos e alunos revela diferenças relevantes entre estados e entre zonas urbana e rural, e essas diferenças mudam ao longo do tempo.**\n",
+        "\n",
+        "### Ação sugerida\n",
+        "\n",
+        "A primeira ação seria utilizar o KPI como **indicador de monitoramento**, combinando-o com informações de qualidade dos equipamentos e conectividade. Estados ou zonas com menor disponibilidade relativa poderiam ser analisados com maior detalhe antes da definição de investimentos.\n",
+        "\n",
+        "### Por que essa abordagem é importante?\n",
+        "\n",
+        "Porque o objetivo não deve ser simplesmente aumentar o número de computadores, mas reduzir situações em que a quantidade de equipamentos é insuficiente em relação ao número de alunos e entender onde as desigualdades de infraestrutura são mais relevantes.\n",
+        "\n",
+        "**Mensagem final:** os dados ajudam a transformar uma pergunta ampla sobre infraestrutura tecnológica em uma análise mensurável, comparável e útil para apoiar decisões."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# Anexo — Resumo automático dos resultados\n",
+        "\n",
+        "A célula abaixo gera os principais indicadores do projeto automaticamente, evitando que números sejam digitados manualmente no relatório."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "estado_maior = por_estado[\"kpi_computadores_aluno\"].idxmax()\n",
+        "estado_menor = por_estado[\"kpi_computadores_aluno\"].idxmin()\n",
+        "ano_maior_gap = evolucao_zona[\"gap_urbano_rural\"].idxmax()\n",
+        "ano_menor_gap = evolucao_zona[\"gap_urbano_rural\"].idxmin()\n",
+        "\n",
+        "resumo = pd.DataFrame({\n",
+        "    \"Indicador\": [\n",
+        "        \"Período\",\n",
+        "        \"Estado com maior KPI\",\n",
+        "        \"Maior KPI\",\n",
+        "        \"Estado com menor KPI\",\n",
+        "        \"Menor KPI\",\n",
+        "        \"Ano de maior desigualdade urbano-rural\",\n",
+        "        \"Maior desigualdade\",\n",
+        "        \"Ano de menor desigualdade urbano-rural\",\n",
+        "        \"Menor desigualdade\"\n",
+        "    ],\n",
+        "    \"Resultado\": [\n",
+        "        f\"{por_ano.index.min()}–{por_ano.index.max()}\",\n",
+        "        estado_maior,\n",
+        "        round(por_estado.loc[estado_maior, \"kpi_computadores_aluno\"], 3),\n",
+        "        estado_menor,\n",
+        "        round(por_estado.loc[estado_menor, \"kpi_computadores_aluno\"], 3),\n",
+        "        int(ano_maior_gap),\n",
+        "        round(evolucao_zona.loc[ano_maior_gap, \"gap_urbano_rural\"], 3),\n",
+        "        int(ano_menor_gap),\n",
+        "        round(evolucao_zona.loc[ano_menor_gap, \"gap_urbano_rural\"], 3)\n",
+        "    ]\n",
+        "})\n",
+        "\n",
+        "display(resumo)"
+      ]
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "display_name": "Python 3",
+      "language": "python",
+      "name": "python3"
+    },
+    "language_info": {
+      "name": "python",
+      "version": "3.x"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}
